@@ -1,0 +1,4 @@
+INSERT INTO user_details(
+	age_group, date_of_birth, email_id, first_name, mobile_number, pin, second_name, smartcard_details_cardid, role)
+	VALUES ('Adult', '28-09-1995', 'antonyitteera@gmail.com', 'Antony', '8111802071', '1234', 'Itteera', 1, 'user');
+	

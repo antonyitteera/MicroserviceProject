@@ -1,0 +1,8 @@
+INSERT INTO smartcard_details(
+	 balance, smart_card_num, card_status, date_of_exp, date_of_reg)
+	VALUES (100.00, '1234567890', 'Available', '19-04-2023', '19-04-2022');
+
+INSERT INTO user_details(
+	age_group, date_of_birth, email_id, first_name, mobile_number, pin, second_name, smartcard_details_cardid, role)
+	VALUES ('Adult', '28-09-1995', 'antonyitteera@gmail.com', 'Antony', '8111802071', '1234', 'Itteera', 1, 'user');
+	
