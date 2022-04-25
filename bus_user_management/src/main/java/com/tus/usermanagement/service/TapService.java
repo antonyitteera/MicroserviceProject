@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.tus.usermanagement.DTO.PassengerDTO;
+import com.tus.usermanagement.DTO.ResponseTapDTO;
 import com.tus.usermanagement.DTO.TapDTO;
 import com.tus.usermanagement.entity.UserEntity;
+import com.tus.usermanagement.exception.InvalidBusException;
 import com.tus.usermanagement.repository.UserRepository;
 
 import io.netty.handler.codec.http.HttpHeaderDateFormat;
@@ -27,24 +29,21 @@ public class TapService {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	@Value("${fleet-management-service}")
+	@Value("${fare-calculation-service}")
 	String fleetService;
 	
-	public String tapUser(TapDTO tappedUser) {
-		UserEntity userDetails=userRepo.findById(tappedUser.getUserId()).get();
-		double availableBalance=userDetails.getSmartCard().getBalance();
-		PassengerDTO passObj= new PassengerDTO(tappedUser.getUserId(), tappedUser.getSourcePoint(), tappedUser.getRouteNumber(), tappedUser.getBusNumber(), availableBalance);
+	public ResponseEntity<ResponseTapDTO> tapUser(TapDTO tappedUser) {
+		PassengerDTO passObj= new PassengerDTO(tappedUser.getUserId(), tappedUser.getSourcePoint(), tappedUser.getRouteNumber(), tappedUser.getBusNumber());
 		HttpHeaders reqHeader= new HttpHeaders();
 		reqHeader.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<PassengerDTO> reqEntity= new HttpEntity<>(passObj,reqHeader);
-		ResponseEntity<String> respEntity=restTemplate.exchange("http://"+fleetService+"/api/v1/passenger",HttpMethod.POST,reqEntity,String.class);
-		//String restObj=restTemplate.postForObject("http://"+fleetService+"/api/v1/passenger", passObj, String.class);
+		ResponseEntity<ResponseTapDTO> respEntity=restTemplate.exchange("http://"+fleetService+"/api/v2/passenger",HttpMethod.POST,reqEntity,ResponseTapDTO.class);
 		System.out.println(respEntity.getBody()+" Call successfull");
 		//return restObj;
 		if(respEntity.getStatusCode()==HttpStatus.OK) {
-			return respEntity.getBody();
+			return respEntity;
 		}else {
-			return "Invalid bus or route number";
+			throw new InvalidBusException("Invalid Bus or Route Number");
 		}
 	}
 }

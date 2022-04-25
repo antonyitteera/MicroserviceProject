@@ -45,4 +45,12 @@ public class UserExceptionController {
 		response.put("Message", message);
 		return new ResponseEntity<Object>(response, HttpStatus.NOT_ACCEPTABLE);
 	}
+	
+	@ExceptionHandler(value=InvalidBusException.class)
+	public ResponseEntity<Object> exception(InvalidBusException exception){
+		Map<String, String> response= new HashMap<>();
+		String message=exception.getMessage();
+		response.put("Message", message);
+		return new ResponseEntity<Object>(response, HttpStatus.NOT_ACCEPTABLE);
+	}
 }

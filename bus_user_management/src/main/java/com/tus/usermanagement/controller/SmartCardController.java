@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,6 @@ import com.tus.usermanagement.entity.SmartCardEntity;
 import com.tus.usermanagement.entity.UserEntity;
 import com.tus.usermanagement.exception.PaymentFailedException;
 import com.tus.usermanagement.repository.UserRepository;
-import com.tus.usermanagement.utils.CommonUtils;
 import com.tus.usermanagement.utils.JwtUtil;
 
 @CrossOrigin("*")
@@ -40,9 +39,6 @@ public class SmartCardController {
 	
 	@Autowired
 	private UserRepository userRepo;
-	
-	@Autowired
-	private CommonUtils commonUtils;
 	
 	@Autowired
 	private JwtUtil jwt;
@@ -103,14 +99,10 @@ public class SmartCardController {
 	
 	//to deduct the fare from smartcard
 	@RequestMapping(value = "user/{userid}/deduct", method = RequestMethod.PUT)
-	public ResponseEntity<ResponseDTO> deductFareFromCard(@RequestHeader("Authorization") String authToken,@RequestBody FareDTO fareDTO) {
-		String[] token=authToken.split(" ");
-		Integer userid=Integer.parseInt(jwt.extractusername(token[1]));
+	public ResponseEntity<String> deductFareFromCard(@PathVariable Integer userid,@RequestBody FareDTO fareDTO) {
 		UserEntity userEntity=userRepo.findById(userid).get();
 		double currentBalance=userEntity.getSmartCard().getBalance();
-		String email=userEntity.getEmailId();
 		String name=userEntity.getFirstName();
-		String subject="Easyfare Invoice";
 		String message;
 		double fare=fareDTO.getFare();
 		double newBalance=currentBalance-fare;
@@ -121,13 +113,9 @@ public class SmartCardController {
 			if(newBalance<=0) {
 				message=message+"Available balance is less than 0. Recharge soon!!";
 			}
-			//EmailDTO email= new EmailDTO(fareDTO.getSource(), fareDTO.getDestination(), fareDTO.getFare(), newBalance);
-			EmailDTO emailDTO= new EmailDTO(name,email, subject, fareDTO.getSource(), fareDTO.getDestination(), fareDTO.getFare(), newBalance);
-			commonUtils.sendEmailNotification(emailDTO);
 		}else {
 			throw new PaymentFailedException();
 		}
-		ResponseDTO respObj= new ResponseDTO(message);
-		return new ResponseEntity<ResponseDTO>(respObj, HttpStatus.OK);
+		return new ResponseEntity<String>(message, HttpStatus.OK);
 	}
 }

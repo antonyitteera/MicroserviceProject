@@ -24,7 +24,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-//@IdClass(SmartCardKey.class)
 @Table(name = "smartcard_details")
 @Builder
 @AllArgsConstructor
@@ -33,11 +32,8 @@ public class SmartCardEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "cardid_generator")
 	@SequenceGenerator(name = "cardid_generator",sequenceName = "cardid_seq",allocationSize = 1,initialValue = 3)
-	//@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-	//@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="cardid")
 	private int cardId;
-	//@Id
 	@Column(name="smart_card_num")
 	private String cardNum;
 	@JsonFormat(pattern="dd-MM-yyyy")

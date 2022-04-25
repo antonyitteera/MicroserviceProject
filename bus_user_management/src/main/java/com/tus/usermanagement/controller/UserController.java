@@ -74,6 +74,7 @@ public class UserController {
 	//to fetch all the user
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	public ResponseEntity<List<UserEntity>> getUserDetails() {
+		System.out.println("Code inside controller");
 		List<UserEntity> ueList=userRepo.findAll();
 		
 		 return new ResponseEntity<List<UserEntity>>(ueList, HttpStatus.OK);

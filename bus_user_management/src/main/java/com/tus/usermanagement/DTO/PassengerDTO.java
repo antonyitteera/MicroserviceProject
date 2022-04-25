@@ -6,10 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PassengerDTO {
-	private Integer userid;
-	private String startpoint;
+	private Integer userId;
+	private String sourcePoint;
 	private String routeNumber;
 	private String busNumber;
-	private double availableBalance;
 		
 }
